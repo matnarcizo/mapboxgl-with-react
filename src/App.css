@@ -2,6 +2,7 @@
   /*text-align: center;*/
   height: 99.99vh;
   width: 99.99vw;
+  position: absolute;
 }
 
 .App-logo {
