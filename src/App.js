@@ -44,13 +44,15 @@ class App extends Component {
       this.map.addImage('pino', pino, {width: 19, height: 26})
       console.log(this.map)
       this.map.addLayer({
-          "id": "route",
+          "id": "polyline",
           "type": "line",
           "source": {
               "type": "geojson",
               "data": {
                   "type": "Feature",
-                  "properties": {},
+                  "properties": {
+                    "description": "<strong>EITA</strong>"
+                  },
                   "geometry": {
                       "type": "LineString",
                       "coordinates": [
@@ -67,8 +69,9 @@ class App extends Component {
               "line-cap": "round"
           },
           "paint": {
-              "line-color": "#F00",
-              "line-width": 2
+              "line-color": "#757575",
+              "line-width": 3,
+              "line-opacity": 0.8
           }
       });
 
@@ -155,6 +158,7 @@ class App extends Component {
 
       // const elements = []
       //
+      let popup = null
       let el = document.createElement('div');
       // el.className = 'marker';
       el.style.background = 'url(' + pin + ') no-repeat';
@@ -166,11 +170,23 @@ class App extends Component {
       	.setLngLat([-46.7521589, -23.5149872])
       	.addTo(this.map)
 
-      el.addEventListener('mouseover', () => {
-        m.setPopup(
-          new mapboxgl.Popup({closeButton: false, anchor: 'bottom', offset: [0, -26]})
-            .setHTML('<p>MININA</p>')
-        )
+      el.addEventListener('mouseenter', () => {
+        el.style.cursor = 'pointer'
+
+        popup = new mapboxgl.Popup({closeButton: false, anchor: 'bottom', offset: [0, -26]})
+        .setHTML('<p>MININA</p>')
+        .setLngLat([m.getLngLat().lng, m.getLngLat().lat])
+        .addTo(this.map)
+        console.log('minina')
+        console.log(m.getLngLat())
+
+      })
+
+      el.addEventListener('mouseleave', () => {
+        el.style.cursor = ''
+
+        popup.remove()
+        popup = null
       })
       //
       // elements.push(m)
@@ -216,9 +232,21 @@ class App extends Component {
       // let marker = new mapboxgl.Marker().setLngLat([-46.6466657, -23.576324]).addTo(this.map)
 
       // this.setState({ loaded: true })
-    })
 
-    // let marker = new mapboxgl.Marker().setLngLat().addTo(map)
+      this.map.on('mouseenter', 'polyline', () => {
+        this.map.getCanvas().style.cursor = 'pointer'
+
+        this.map.setPaintProperty('polyline', 'line-color', '#75A21C')
+        this.map.setPaintProperty('polyline', 'line-width', 10)
+      })
+      this.map.on('mouseleave', 'polyline', () => {
+        this.map.getCanvas().style.cursor = ''
+
+        this.map.setPaintProperty('polyline', 'line-color', '#F00')
+        this.map.setPaintProperty('polyline', 'line-width', 5)
+      })
+
+    })// let marker = new mapboxgl.Marker().setLngLat().addTo(map)
 
   }
 
